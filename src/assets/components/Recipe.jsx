@@ -35,9 +35,10 @@ class Recipe extends React.Component {
     }
 
     //POST//
-    addRecipe = async (ingredients) => {
+    addRecipe = async (input) => {
         console.log('Im here before post request');
-        axios.post(`${PORT}/recipes`, ingredients)
+        const ingredientsObj = {ingredients: input}
+        axios.post(`${PORT}/recipes`, ingredientsObj)
         .then(response => {
             this.setState({recipes: [...this.state.recipes, response.data]})
             console.log(response.data)
