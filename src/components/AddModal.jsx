@@ -28,7 +28,9 @@ class AddModal extends React.Component {
 
     render() {
       return (
-        <Modal show={this.props.show} onHide={this.props.onHide}>
+        <Modal 
+        show={this.props.showAddModal} 
+        onHide={this.props.toggleAddModal}>
         <Modal.Header closeButton>
           <Modal.Title>New Recipe</Modal.Title>
         </Modal.Header>
@@ -54,7 +56,7 @@ class AddModal extends React.Component {
           </Form>
         </Modal.Body>
         <Modal.Footer>
-          <Button variant="secondary" onClick={this.props.onHide}>
+          <Button variant="secondary" onClick={() => this.props.toggleAddModal()}>
             Close
           </Button>
           <Button variant="primary" onClick={this.handleSubmit}>

@@ -11,7 +11,7 @@ class Recipe extends React.Component {
     super(props);
     this.state = {
       recipes: [],
-      showModal: false,
+      showAddModal: false,
       showFullRecipeModal: false,
       token: null,
       editRecipe: null,
@@ -27,23 +27,15 @@ class Recipe extends React.Component {
     });
   }
 
-  handleShowModal = () => {
-    this.setState({ showModal: true });
+  toggleAddModal = () => {
+    this.setState({ showAddModal: !this.state.showAddModal });
   };
 
-  handleCloseModal = () => {
-    this.setState({ showModal: false });
-  };
-
-  handleShowFullRecipeModal = (recipe) => {
+  toggleFullRecipeModal = (recipe) => {
     this.setState({ 
-      showFullRecipeModal: true,
+      showFullRecipeModal: !this.state.showFullRecipeModal,
       editRecipe: recipe,
      });
-  };
-
-  handleCloseFullRecipeModal = () => {
-      this.setState({ showFullRecipeModal: false });
   };
 
   //GET//
@@ -93,12 +85,12 @@ class Recipe extends React.Component {
   render() {
     return (
       <div style={{ display:"flex", justifyContent:"center", flexDirection:"column", margin:"1rem 5%" }}>
-        <Button style={{ width:"10rem", margin:"0 auto" }} variant="success" onClick={this.handleShowModal}>
+        <Button style={{ width:"10rem", margin:"0 auto" }} variant="success" onClick={() => this.toggleAddModal()}>
           Add New Recipe
         </Button>
         <AddModal
-          show={this.state.showModal}
-          onHide={this.handleCloseModal}
+          toggleAddModal={this.toggleAddModal}
+          showAddModal={this.state.showAddModal}
           addRecipe={this.addRecipe}
         />
         { this.state.recipes.length > 0 ? <Carousel>
@@ -113,13 +105,13 @@ class Recipe extends React.Component {
                 <div>
                   <h3>{recipe.dishName}</h3>
 
-                  <Button variant="outline-success" onClick={() => this.handleShowFullRecipeModal(recipe)}>
+                  <Button variant="outline-success" onClick={() => this.toggleFullRecipeModal(recipe)}>
                       Click Here For Full Recipe!
                   </Button>
                   <FullRecipeModal
-                      show={this.state.showFullRecipeModal}
-                      onHide={this.handleCloseFullRecipeModal}
+                      toggleFullRecipeModal={this.toggleFullRecipeModal}
                       editRecipe={this.state.editRecipe}
+                      showFullRecipeModal={this.state.showFullRecipeModal}
                   />
                 </div>
               </div>

@@ -1,0 +1,4 @@
+.custom-modal .modal-content  {
+  width: 80%; /* Adjust the width as per your requirements */
+  max-width: 800px; /* Optional: Set a max-width if needed */
+}

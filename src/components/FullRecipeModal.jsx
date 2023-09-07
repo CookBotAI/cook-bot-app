@@ -1,7 +1,7 @@
 import React from 'react';
-import {Modal, Button, Form, ListGroup} from 'react-bootstrap'
-import PropTypes from 'prop-types';
-
+import Button from 'react-bootstrap/Button';
+import Modal from 'react-bootstrap/Modal';
+import './modal.css';
 
 class FullRecipeModal extends React.Component {
   constructor(props) {
@@ -10,53 +10,62 @@ class FullRecipeModal extends React.Component {
 
   render() {
     return (
-      <Modal show={this.props.show} onHide={this.props.onHide}>
-        <Modal.Header closeButton>
-          <Modal.Title>Full Recipe</Modal.Title>
-        </Modal.Header>
-        <Modal.Body>
-          <h3>{this.props.editRecipe ? this.props.editRecipe.dishName : null}</h3>
-          <img
-                  className="img-fluid recipe-placeholder mx-3"
-                  src={this.props.editRecipe ? this.props.editRecipe.imageUrl : null}
-                  alt="Recipe Image Placeholder"
-                />
-          <ul>
+      <>
+        <Modal
+          show={this.props.showFullRecipeModal}
+          onHide={this.props.toggleFullRecipeModal}
+          // dialogClassName="modal-90w"
+          className="custom-modal"
+          aria-labelledby="example-custom-modal-styling-title"
+        >
+          <Modal.Header closeButton>
+            <Modal.Title id="example-custom-modal-styling-title">
+              {this.props.editRecipe
+                ? this.props.editRecipe.dishName.toUpperCase()
+                : null}
+            </Modal.Title>
+          </Modal.Header>
+          <Modal.Body>
+            <img
+              className="img-fluid recipe-placeholder mx-3"
+              src={
+                this.props.editRecipe ? this.props.editRecipe.imageUrl : null
+              }
+              alt="Recipe Image Placeholder"
+            />
             <ul>
-              {this.props.editRecipe &&
-                this.props.editRecipe.cookingSteps.map((step, recipIdx) => (
-                  <li key={recipIdx}>{step}</li>
-                ))}
+              <ul>
+                {this.props.editRecipe &&
+                  this.props.editRecipe.cookingSteps.map((step, recipIdx) => (
+                    <li key={recipIdx}>{step}</li>
+                  ))}
+              </ul>
+              <h4>
+                <strong>Ingredients:</strong>
+              </h4>
+              <ul>
+                {this.props.editRecipe &&
+                  this.props.editRecipe.ingredients.map(
+                    (ingredient, ingrIdx) => <li key={ingrIdx}>{ingredient}</li>
+                  )}
+              </ul>
             </ul>
-            <h4>
-              <strong>Ingredients:</strong>
-            </h4>
-            <ul>
-              {this.props.editRecipe &&
-                this.props.editRecipe.ingredients.map((ingredient, ingrIdx) => (
-                  <li key={ingrIdx}>{ingredient}</li>
-                ))}
-            </ul>
-          </ul>
-        </Modal.Body>
-        <Modal.Footer>
-          <Button variant="secondary" onClick={this.props.onHide}>
-            Close
-          </Button>
-        </Modal.Footer>
-      </Modal>
+          </Modal.Body>
+          <Modal.Footer>
+            <Button variant="secondary" onClick={this.props.onHide}>
+              Edit
+            </Button>
+            <Button
+              variant="secondary"
+              onClick={() => this.props.toggleFullRecipeModal()}
+            >
+              Close
+            </Button>
+          </Modal.Footer>
+        </Modal>
+      </>
     );
   }
 }
 
-FullRecipeModal.propTypes = {
-  show: PropTypes.bool.isRequired,
-  onHide: PropTypes.func.isRequired,
-};
-
-FullRecipeModal.defaultProps = {
-  show: false,
-  onHide: () => {},
-};
-
-export default FullRecipeModal; 
+export default FullRecipeModal;
