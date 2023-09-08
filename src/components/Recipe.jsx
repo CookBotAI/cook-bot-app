@@ -7,6 +7,7 @@ import { Button } from 'react-bootstrap';
 import { withAuth0 } from '@auth0/auth0-react';
 import EditModal from './EditModal';
 
+
 class Recipe extends React.Component {
   constructor(props) {
     super(props);
@@ -17,7 +18,10 @@ class Recipe extends React.Component {
       currentRecipe: null,
       token: null,
       editRecipe: null,
+      editMode: false,
       showEditModal: false,
+      currentRecipeId: null,
+
     };
   }
 
@@ -56,6 +60,61 @@ class Recipe extends React.Component {
   handleCloseFullRecipeModal = () => {
     this.setState({ showFullRecipeModal: false });
   };
+  
+  // Notes //
+  handleNoteChange = (newNote) => {
+    this.setState(prevState => ({
+      currentRecipe: {
+        ...prevState.currentRecipe,
+        notes: newNote
+      }
+    }));
+  }
+
+  toggleEditMode = () => {
+    if (this.state.editMode) {
+      this.saveNotes(); 
+    }
+    this.setState(prevState => ({ editMode: !prevState.editMode }));
+  }
+
+  saveNotes = async () => {
+    const currentRecipe = this.state.recipes.find(recipe => recipe._id === this.state.currentRecipeId);
+    const updatedData = {
+      ...currentRecipe,
+    };
+  
+    try {
+      await this.updateRecipe(currentRecipe._id, updatedData);
+      const updatedRecipes = this.state.recipes.map((recipe) => {
+        if (recipe._id === currentRecipe._id) {
+          return updatedData;
+        }
+        return recipe;
+      });
+      this.setState({ recipes: updatedRecipes });
+    } catch (error) {
+      console.error("Failed to save note:", error);
+    }
+  }
+
+
+  deleteNote = async () => {
+    const currentRecipe = this.state.recipes.find(recipe => recipe._id === this.state.currentRecipeId);
+
+    try {
+      await this.props.authRequest('DELETE', this.state.token, `${currentRecipe._id}/notes`);
+      const updatedRecipes = this.state.recipes.map((recipe) => {
+        if (recipe._id === currentRecipe._id) {
+          return { ...recipe, notes: '' };
+        }
+        return recipe;
+      });
+      this.setState({ recipes: updatedRecipes, currentRecipe: '', editMode: false });
+    } catch (error) {
+      console.error("Failed to delete note:", error);
+    }
+  }
 
   //GET//
   fetchRecipes = async () => {
@@ -150,7 +209,7 @@ class Recipe extends React.Component {
         {this.state.recipes.length > 0 ? (
           <Carousel className="custom-carousel">
             {this.state.recipes.map((recipe, idx) => (
-              <Carousel.Item key={idx} interval={1000}>
+              <Carousel.Item key={idx} interval={25000}>
                 <img
                   className="d-block w-100"
                   src={recipe.imageUrl}
@@ -176,6 +235,12 @@ class Recipe extends React.Component {
                     updateRecipe={this.updateRecipe}
                     handleUpdateRecipe={this.handleUpdateRecipe}
                     deleteRecipe={this.deleteRecipe}
+                    handleNoteChange={this.handleNoteChange}
+                    toggleEditMode={this.toggleEditMode}
+                    deleteNote={this.deleteNote}
+                    editMode={this.state.editMode}
+                    notes={recipe.notes || ""}
+                    currentRecipeId={recipe._id}
                   />
                 </div>
               </Carousel.Item>
